@@ -1,49 +1,46 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import PostFeed from "./UserFeed";
+import UserFeed from "./UserFeed";
 import Spinner from "../common/Spinner";
-import { getPosts } from "../../actions/postActions";
+import { getUsers } from "../../actions/userActions";
 
-class Posts extends Component {
-    componentDidMount() {
-        this.props.getPosts();
+class Users extends Component {
+  componentDidMount() {
+    this.props.getUsers();
+  }
+  render() {
+    const { users, loading } = this.props.user;
+    let userContent;
+
+    if (users === null || loading) {
+      userContent = <Spinner />;
+    } else {
+      userContent = <UserFeed users={users} />;
     }
-    render() {
-        const { posts, loading } = this.props.post;
-        let postContent;
 
-        if (posts === null || loading) {
-            postContent = <Spinner />;
-        } else {
-            postContent = <PostFeed posts={posts} />;
-        }
-
-        return (
-            <div className="feed">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-12">
-                            {/*<PostForm />*/}
-                            {postContent}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    return (
+      <div className="feed">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">{userContent}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
-Posts.propTypes = {
-    getPosts: PropTypes.func.isRequired,
-    post: PropTypes.object.isRequired
+Users.propTypes = {
+  getUsers: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    post: state.post
+  user: state.user
 });
 
 export default connect(
-    mapStateToProps,
-    { getPosts }
-)(Posts);
+  mapStateToProps,
+  { getUsers }
+)(Users);

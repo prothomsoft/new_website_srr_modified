@@ -12,39 +12,40 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import setAuthToken from "./utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { setCurrentUser, logoutUser } from "./actions/authActions";
-import { clearCurrentProfile } from "./actions/profileActions";
 
 const serializedState = window.__PRELOADED_STATE__;
 delete window.__PRELOADED_STATE__;
-const store = createStore(rootReducer, serializedState, composeWithDevTools(applyMiddleware(thunk)));
+const store = createStore(
+  rootReducer,
+  serializedState,
+  composeWithDevTools(applyMiddleware(thunk))
+);
 
 // Check for token
 if (localStorage.jwtToken) {
-    // Set auth token header auth
-    setAuthToken(localStorage.jwtToken);
-    // Decode token and get user info and exp
-    const decoded = jwt_decode(localStorage.jwtToken);
-    // Set user and isAuthenticated
-    store.dispatch(setCurrentUser(decoded));
+  // Set auth token header auth
+  setAuthToken(localStorage.jwtToken);
+  // Decode token and get user info and exp
+  const decoded = jwt_decode(localStorage.jwtToken);
+  // Set user and isAuthenticated
+  store.dispatch(setCurrentUser(decoded));
 
-    // Check for expired token
-    const currentTime = Date.now() / 1000;
-    if (decoded.exp < currentTime) {
-        // Logout user
-        store.dispatch(logoutUser());
-        // Clear current Profile
-        store.dispatch(clearCurrentProfile());
+  // Check for expired token
+  const currentTime = Date.now() / 1000;
+  if (decoded.exp < currentTime) {
+    // Logout user
+    store.dispatch(logoutUser());
 
-        // Redirect to login
-        window.location.href = "/login";
-    }
+    // Redirect to login
+    window.location.href = "/login";
+  }
 }
 
 hydrate(
-    <Provider store={store}>
-        <BrowserRouter>
-            <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
-        </BrowserRouter>
-    </Provider>,
-    document.getElementById("root")
+  <Provider store={store}>
+    <BrowserRouter>
+      <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
+    </BrowserRouter>
+  </Provider>,
+  document.getElementById("root")
 );

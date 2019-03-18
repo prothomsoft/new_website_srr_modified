@@ -1,45 +1,45 @@
 import {
-  ADD_POST,
-  GET_POSTS,
-  GET_POST,
-  DELETE_POST,
-  POST_LOADING
-} from '../actions/types';
+  ADD_USER,
+  GET_USERS,
+  GET_USER,
+  DELETE_USER,
+  USER_LOADING
+} from "../actions/types";
 
 const initialState = {
-  posts: [],
-  post: {},
+  users: [],
+  user: {},
   loading: false
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case POST_LOADING:
+    case USER_LOADING:
       return {
         ...state,
         loading: true
       };
-    case GET_POSTS:
+    case GET_USERS:
       return {
         ...state,
-        posts: action.payload,
+        users: action.payload,
         loading: false
       };
-    case GET_POST:
+    case GET_USER:
       return {
         ...state,
-        post: action.payload,
+        user: action.payload,
         loading: false
       };
-    case ADD_POST:
+    case ADD_USER:
       return {
         ...state,
-        posts: [action.payload, ...state.posts]
+        users: [action.payload, ...state.users]
       };
-    case DELETE_POST:
+    case DELETE_USER:
       return {
         ...state,
-        posts: state.posts.filter(post => post._id !== action.payload)
+        users: state.users.filter(user => user._id !== action.payload)
       };
     default:
       return state;

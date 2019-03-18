@@ -11,11 +11,8 @@ import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { Provider } from "react-redux";
 import passport from "passport";
-
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import posts from "../routes/api/posts";
-import profile from "../routes/api/profile";
 import users from "../routes/api/users";
 import { Helmet } from "react-helmet";
 
@@ -39,47 +36,49 @@ passportStrategy(passport);
 
 // Connect To MongoDB:
 mongoose.connect(
-    "mongodb://localhost/DevSpace",
-    { useNewUrlParser: true },
-    function(err) {
-        if (err) {
-            console.log("Error: Mongo Wasnt Connected because of: ", err);
-        } else {
-            console.log("MongoDB Connected");
-        }
+  "mongodb://localhost/DevSpace",
+  { useNewUrlParser: true },
+  function(err) {
+    if (err) {
+      console.log("Error: Mongo Wasnt Connected because of: ", err);
+    } else {
+      console.log("MongoDB Connected");
     }
+  }
 );
 
-router.use(posts);
-router.use(profile);
 router.use(users);
 
 router.get("*", handleRender);
 
 function handleRender(req, res) {
-    const store = createStore(rootReducer, applyMiddleware(thunk));
-    const promises = matchRoutes(routes, req.originalUrl).map(({ route, match }) => {
-        return route.component.fetchData ? route.component.fetchData(store, match) : Promise.resolve(null);
-    });
+  const store = createStore(rootReducer, applyMiddleware(thunk));
+  const promises = matchRoutes(routes, req.originalUrl).map(
+    ({ route, match }) => {
+      return route.component.fetchData
+        ? route.component.fetchData(store, match)
+        : Promise.resolve(null);
+    }
+  );
 
-    return Promise.all(promises).then(data => {
-        let context = {};
-        const sheet = new ServerStyleSheet();
-        const html = renderToString(
-            sheet.collectStyles(
-                <Provider store={store}>
-                    <StaticRouter context={context} location={req.url}>
-                        {renderRoutes(routes)}
-                    </StaticRouter>
-                </Provider>
-            )
-        );
-        const styles = sheet.getStyleTags();
-        const serializedState = store.getState();
-        const helmet = Helmet.renderStatic();
+  return Promise.all(promises).then(data => {
+    let context = {};
+    const sheet = new ServerStyleSheet();
+    const html = renderToString(
+      sheet.collectStyles(
+        <Provider store={store}>
+          <StaticRouter context={context} location={req.url}>
+            {renderRoutes(routes)}
+          </StaticRouter>
+        </Provider>
+      )
+    );
+    const styles = sheet.getStyleTags();
+    const serializedState = store.getState();
+    const helmet = Helmet.renderStatic();
 
-        res.status(200).send(renderFullPage(html, helmet, styles, serializedState));
-    });
+    res.status(200).send(renderFullPage(html, helmet, styles, serializedState));
+  });
 }
 
 app.use(router);
