@@ -3,9 +3,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import keys from "../config/keys";
 import passport from "passport";
-import { validateAddUserInput } from "../../validation/server/user";
-import { validateLoginInput } from "../../validation/server/login";
-import User from "../../models/User";
+import { validateAddUserInput } from "../validation/server/user";
+import { validateLoginInput } from "../validation/server/login";
+import User from "../models/User";
 
 const router = express.Router();
 
