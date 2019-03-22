@@ -13,7 +13,7 @@ import { Provider } from "react-redux";
 import passport from "passport";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import users from "../routes/api/users";
+import users from "../api/users";
 import { Helmet } from "react-helmet";
 
 import { ServerStyleSheet } from "styled-components";
