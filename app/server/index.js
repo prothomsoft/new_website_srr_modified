@@ -14,6 +14,7 @@ import passport from "passport";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import users from "../api/users";
+import profile from "../api/upload";
 import { Helmet } from "react-helmet";
 
 import { ServerStyleSheet } from "styled-components";
@@ -48,6 +49,7 @@ mongoose.connect(
 );
 
 router.use(users);
+router.use(profile);
 
 router.get("*", handleRender);
 

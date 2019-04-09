@@ -48,8 +48,7 @@ export const getUser = id => dispatch => {
     );
 };
 
-// Add Post
-
+// Add User
 export const addUser = (userData, history) => dispatch => {
   dispatch(clearErrors());
   return ax
