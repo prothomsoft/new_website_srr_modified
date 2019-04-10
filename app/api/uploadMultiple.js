@@ -13,7 +13,7 @@ aws.config.update({
 });
 const s3 = new aws.S3();
 
-const singleUpload = multer({
+const multipleUpload = multer({
   storage: multerS3({
     s3: s3,
     bucket: "99fotobucket1",
@@ -25,16 +25,25 @@ const singleUpload = multer({
       cb(null, Date.now().toString() + ".jpg");
     }
   })
-}).single("image");
+}).array("images", 4);
 
-router.post("/api/img-upload", (req, res) => {
-  singleUpload(req, res, function(err) {
+router.post("/api/img-upload-multiple", (req, res) => {
+  multipleUpload(req, res, function(err) {
     if (err) {
       return res.status(422).send({
         errors: [{ title: "Image Upload Error", detail: err.message }]
       });
     }
-    return res.json({ imageUrl: req.file.location });
+    let fileArray = req.files,
+      fileLocation;
+    const galleryImgLocationArray = [];
+    for (let i = 0; i < fileArray.length; i++) {
+      fileLocation = fileArray[i].location;
+      console.log("filenm", fileLocation);
+      galleryImgLocationArray.push(fileLocation);
+    }
+
+    return res.json({ imageUrl: fileLocation });
   });
 });
 

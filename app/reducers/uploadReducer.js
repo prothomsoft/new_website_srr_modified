@@ -1,4 +1,4 @@
-import { FILE_UPLOADED } from "../actions/types";
+import { FILE_UPLOADED, FILES_UPLOADED } from "../actions/types";
 
 const initialState = {
   image: {}
@@ -7,6 +7,11 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case FILE_UPLOADED:
+      return {
+        ...state,
+        image: action.payload
+      };
+    case FILES_UPLOADED:
       return {
         ...state,
         image: action.payload

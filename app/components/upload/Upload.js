@@ -2,13 +2,19 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { fileUpload } from "../../actions/uploadActions";
+import { fileUploadSingle } from "../../actions/uploadActions";
+import { fileUploadMultiple } from "../../actions/uploadActions";
 
 class Upload extends Component {
   constructor() {
     super();
     this.singleFileChangedHandler = this.singleFileChangedHandler.bind(this);
     this.singleFileUploadHandler = this.singleFileUploadHandler.bind(this);
+
+    this.multipleFileChangedHandler = this.multipleFileChangedHandler.bind(
+      this
+    );
+    this.multipleFileUploadHandler = this.multipleFileUploadHandler.bind(this);
   }
 
   singleFileChangedHandler(event) {
@@ -26,12 +32,31 @@ class Upload extends Component {
         this.state.selectedFile.name
       );
     }
-    this.props.fileUpload(data, this.props.history);
+    this.props.fileUploadSingle(data, this.props.history);
+  }
+
+  multipleFileChangedHandler(event) {
+    this.setState({
+      selectedFiles: event.target.files
+    });
+  }
+
+  multipleFileUploadHandler() {
+    const data = new FormData();
+    if (this.state.selectedFiles) {
+      for (let i = 0; i < this.state.selectedFiles.length; i++) {
+        data.append(
+          "images",
+          this.state.selectedFiles[i],
+          this.state.selectedFiles[i].name
+        );
+      }
+    }
+    this.props.fileUploadMultiple(data, this.props.history);
   }
 
   render() {
     const { image } = this.props.uploadReducer;
-
     return (
       <div className="container">
         <img src={image.imageUrl} />
@@ -63,13 +88,46 @@ class Upload extends Component {
             </div>
           </div>
         </div>
+        {/* Multiple File Upload */}
+        <div
+          className="card border-light mb-3"
+          style={{ boxShadow: "0 5px 10px 2px rgba(195,192,192,.5)" }}
+        >
+          <div className="card-header">
+            <h3 style={{ color: "#555", marginLeft: "12px" }}>
+              Upload Muliple Images
+            </h3>
+            <p className="text-muted" style={{ marginLeft: "12px" }}>
+              Upload Size: 400px x 400px ( Max 2MB )
+            </p>
+          </div>
+          <div className="card-body">
+            <p className="card-text">
+              Please upload the Gallery Images for your gallery
+            </p>
+            <input
+              type="file"
+              multiple
+              onChange={this.multipleFileChangedHandler}
+            />
+            <div className="mt-5">
+              <button
+                className="btn btn-info"
+                onClick={this.multipleFileUploadHandler}
+              >
+                Upload!
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
 Upload.propTypes = {
-  fileUpload: PropTypes.func.isRequired
+  fileUploadSingle: PropTypes.func.isRequired,
+  fileUploadMultiple: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -79,5 +137,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { fileUpload }
+  { fileUploadSingle, fileUploadMultiple }
 )(withRouter(Upload));

@@ -8,3 +8,4 @@ export const DELETE_USER = "DELETE_USER";
 export const USER_LOADING = "USER_LOADING";
 
 export const FILE_UPLOADED = "FILE_UPLOADED";
+export const FILES_UPLOADED = "FILES_UPLOADED";
