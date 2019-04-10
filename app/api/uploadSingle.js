@@ -7,8 +7,8 @@ const path = require("path");
 const router = express.Router();
 
 aws.config.update({
-  secretAccessKey: "X+6Nt+QUSDTXnjMytu6qSKVO0yOk8mYxZlKnNgkd",
-  accessKeyId: "AKIAWII6DD5WKU5YDX5U",
+  secretAccessKey: "",
+  accessKeyId: "",
   region: "us-west-2" // region of your bucket
 });
 const s3 = new aws.S3();
