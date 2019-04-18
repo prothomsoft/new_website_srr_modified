@@ -8,10 +8,15 @@ import { Provider } from "react-redux";
 import rootReducer from "./reducers";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-
 import setAuthToken from "./utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { setCurrentUser, logoutUser } from "./actions/authActions";
+import JssProvider from "react-jss/lib/JssProvider";
+import {
+  MuiThemeProvider,
+  createGenerateClassName
+} from "@material-ui/core/styles";
+import theme from "./theme/theme";
 
 const serializedState = window.__PRELOADED_STATE__;
 delete window.__PRELOADED_STATE__;
@@ -29,23 +34,28 @@ if (localStorage.jwtToken) {
   const decoded = jwt_decode(localStorage.jwtToken);
   // Set user and isAuthenticated
   store.dispatch(setCurrentUser(decoded));
-
   // Check for expired token
   const currentTime = Date.now() / 1000;
   if (decoded.exp < currentTime) {
     // Logout user
     store.dispatch(logoutUser());
-
     // Redirect to login
     window.location.href = "/login";
   }
 }
 
+// Create a new class name generator.
+const generateClassName = createGenerateClassName();
+
 hydrate(
-  <Provider store={store}>
-    <BrowserRouter>
-      <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
-    </BrowserRouter>
-  </Provider>,
+  <JssProvider generateClassName={generateClassName}>
+    <MuiThemeProvider theme={theme}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <BrowserRouter>{renderRoutes(routes)}</BrowserRouter>
+        </BrowserRouter>
+      </Provider>
+    </MuiThemeProvider>
+  </JssProvider>,
   document.getElementById("root")
 );

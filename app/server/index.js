@@ -17,8 +17,13 @@ import users from "../api/users";
 import uploadSingle from "../api/uploadSingle";
 import uploadMultiple from "../api/uploadMultiple";
 import { Helmet } from "react-helmet";
-
-import { ServerStyleSheet } from "styled-components";
+import { SheetsRegistry } from "jss";
+import JssProvider from "react-jss/lib/JssProvider";
+import {
+  MuiThemeProvider,
+  createGenerateClassName
+} from "@material-ui/core/styles";
+import theme from "../theme/theme";
 
 const app = express();
 const router = express.Router();
@@ -32,7 +37,6 @@ app.use(express.static(path.join(__dirname, "../")));
 app.use(passport.initialize());
 
 // Passport Config:
-
 import { passportStrategy } from "../config/passport";
 passportStrategy(passport);
 
@@ -67,17 +71,31 @@ function handleRender(req, res) {
 
   return Promise.all(promises).then(data => {
     let context = {};
-    const sheet = new ServerStyleSheet();
+    // Create a sheetsRegistry instance.
+    const sheetsRegistry = new SheetsRegistry();
+
+    // Create a sheetsManager instance.
+    const sheetsManager = new Map();
+
+    // Create a new class name generator.
+    const generateClassName = createGenerateClassName();
     const html = renderToString(
-      sheet.collectStyles(
-        <Provider store={store}>
-          <StaticRouter context={context} location={req.url}>
-            {renderRoutes(routes)}
-          </StaticRouter>
-        </Provider>
-      )
+      <JssProvider
+        registry={sheetsRegistry}
+        generateClassName={generateClassName}
+      >
+        <MuiThemeProvider theme={theme} sheetsManager={sheetsManager}>
+          <Provider store={store}>
+            <StaticRouter context={context} location={req.url}>
+              {renderRoutes(routes)}
+            </StaticRouter>
+          </Provider>
+        </MuiThemeProvider>
+      </JssProvider>
     );
-    const styles = sheet.getStyleTags();
+
+    // Grab the CSS from our sheetsRegistry.
+    const styles = sheetsRegistry.toString();
     const serializedState = store.getState();
     const helmet = Helmet.renderStatic();
 

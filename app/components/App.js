@@ -9,20 +9,16 @@ import Dashboard from "../components/dashboard/Dashboard";
 import NotFound from "../components/not-found/NotFound";
 
 import Upload from "../components/upload/Upload";
-
-import styled from "styled-components";
 import Users from "./users/Users";
 import User from "./users/User";
 import UserForm from "./users/UserForm";
-import { Grid, GridCol } from "griz";
 
-const AppContainer = styled.div`
-  font-size: 12px;
-`;
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 export default function App() {
   return (
-    <AppContainer>
+    <div>
+      <CssBaseline />
       <Navbar />
       <Switch>
         <PrivateRoute exact path="/add-user" component={UserForm} />
@@ -35,6 +31,6 @@ export default function App() {
         <Route exact component={NotFound} />
       </Switch>
       <Footer />
-    </AppContainer>
+    </div>
   );
 }

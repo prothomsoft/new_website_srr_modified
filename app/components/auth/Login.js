@@ -2,7 +2,47 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
-import TextFieldGroup from "../common/TextFieldGroup";
+import Button from "@material-ui/core/Button";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import withStyles from "@material-ui/core/styles/withStyles";
+
+const styles = theme => ({
+  main: {
+    width: "auto",
+    display: "block", // Fix IE 11 issue.
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+      width: 400,
+      marginLeft: "auto",
+      marginRight: "auto"
+    }
+  },
+  paper: {
+    marginTop: theme.spacing.unit * 8,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
+      .spacing.unit * 3}px`
+  },
+  avatar: {
+    margin: theme.spacing.unit,
+    backgroundColor: theme.palette.secondary.main
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing.unit
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 3
+  }
+});
 
 class Login extends Component {
   constructor() {
@@ -38,7 +78,6 @@ class Login extends Component {
       email: this.state.email,
       password: this.state.password
     };
-
     this.props.loginUser(userData);
   }
 
@@ -48,39 +87,65 @@ class Login extends Component {
 
   render() {
     const { errors } = this.state;
+    const { classes } = this.props;
 
     return (
-      <div className="login">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-8 m-auto">
-              <h1 className="display-4 text-center">Log In</h1>
-              <p className="lead text-center">
-                Sign in to your DevConnector account
-              </p>
-              <form onSubmit={this.onSubmit}>
-                <TextFieldGroup
-                  placeholder="Email Address"
+      <main className={classes.main}>
+        <Paper className={classes.paper}>
+          <Typography component="h1" variant="h5">
+            Sign in {errors.password}
+          </Typography>
+          <form onSubmit={this.onSubmit} className={classes.form}>
+            {errors.email ? (
+              <FormControl margin="normal" required fullWidth error>
+                <InputLabel htmlFor="email">Email Address</InputLabel>
+                <Input
                   name="email"
-                  type="email"
+                  autoComplete="email"
                   value={this.state.email}
                   onChange={this.onChange}
-                  error={errors.email}
+                  autoFocus
                 />
-                <TextFieldGroup
-                  placeholder="Password"
-                  name="password"
-                  type="password"
-                  value={this.state.password}
+                <FormHelperText id="component-error-text">
+                  {errors}
+                </FormHelperText>
+              </FormControl>
+            ) : (
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="email">Email Address</InputLabel>
+                <Input
+                  name="email"
+                  autoComplete="email"
+                  value={this.state.email}
                   onChange={this.onChange}
-                  error={errors.password}
+                  autoFocus
                 />
-                <input type="submit" className="btn btn-info btn-block mt-4" />
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+              </FormControl>
+            )}
+
+            <FormControl margin="normal" required fullWidth>
+              <InputLabel htmlFor="password">Password</InputLabel>
+              <Input
+                name="password"
+                type="password"
+                id="password"
+                value={this.state.password}
+                onChange={this.onChange}
+                autoComplete="current-password"
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign in
+            </Button>
+          </form>
+        </Paper>
+      </main>
     );
   }
 }
@@ -99,4 +164,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { loginUser }
-)(Login);
+)(withStyles(styles)(Login));
