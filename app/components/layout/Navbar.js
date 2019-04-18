@@ -33,7 +33,7 @@ class Navbar extends Component {
     const { classes } = this.props;
 
     const authLinks = (
-      <div>
+      <React.Fragment>
         <Link className="nav-link" to="/users">
           Users list
         </Link>{" "}
@@ -52,11 +52,11 @@ class Navbar extends Component {
         >
           Logout
         </button>
-      </div>
+      </React.Fragment>
     );
 
     const guestLinks = (
-      <div>
+      <React.Fragment>
         <Link className="nav-link" to="/login">
           Login
         </Link>{" "}
@@ -64,7 +64,7 @@ class Navbar extends Component {
         <Link className="nav-link" to="/upload">
           Upload
         </Link>
-      </div>
+      </React.Fragment>
     );
 
     return (
@@ -73,7 +73,12 @@ class Navbar extends Component {
         <AppBar position="static" className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" color="inherit" noWrap>
-              <div>{isAuthenticated ? authLinks : guestLinks}</div>
+              <React.Fragment>
+                <Link className="nav-link" to="/">
+                  Dashboard
+                </Link>{" "}
+                | {isAuthenticated ? authLinks : guestLinks}
+              </React.Fragment>
             </Typography>
           </Toolbar>
         </AppBar>
