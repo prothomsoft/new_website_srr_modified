@@ -61,6 +61,10 @@ class Navbar extends Component {
           Login
         </Link>{" "}
         |{" "}
+        <Link className="nav-link" to="/contact">
+          Contact
+        </Link>{" "}
+        |{" "}
         <Link className="nav-link" to="/upload">
           Upload
         </Link>

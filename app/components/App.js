@@ -15,6 +15,8 @@ import UserForm from "./users/UserForm";
 
 import CssBaseline from "@material-ui/core/CssBaseline";
 
+import ContactForm from "../components/auth/ContactForm";
+
 export default function App() {
   return (
     <div>
@@ -25,6 +27,7 @@ export default function App() {
         <PrivateRoute exact path="/users" component={Users} />
         <PrivateRoute exact path="/user/:id" component={User} />
         <Route exact path="/login" component={Login} />
+        <Route exact path="/contact" component={ContactForm} />
         <Route exact path="/dashboard" component={Dashboard} />
         <Route exact path="/upload" component={Upload} />
         <Route exact path="/" component={Dashboard} />

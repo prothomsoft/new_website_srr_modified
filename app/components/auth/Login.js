@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
+import { Field, SubmissionError, reduxForm } from "redux-form";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
@@ -44,17 +45,36 @@ const styles = theme => ({
   }
 });
 
+const validate = values => {
+  const errors = {};
+  if (!values.email) {
+    errors.email = "Pole jest wymagane";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = "Błędny adres email";
+  }
+  if (!values.password) {
+    errors.password = "Pole jest wymagane";
+  }
+  return errors;
+};
+
+const renderTextField = ({ input, label, name, meta: { touched, error } }) => (
+  <FormControl
+    margin="normal"
+    required
+    fullWidth
+    error={touched && error ? true : false}
+  >
+    <InputLabel htmlFor={name}>{label}</InputLabel>
+    <Input {...input} />
+    <FormHelperText id={name}>{touched && error ? error : ""}</FormHelperText>
+  </FormControl>
+);
+
 class Login extends Component {
   constructor() {
     super();
-    this.state = {
-      email: "",
-      password: "",
-      errors: {}
-    };
-
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -67,81 +87,45 @@ class Login extends Component {
     if (nextProps.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
     }
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
-    }
   }
 
-  onSubmit(e) {
-    e.preventDefault();
-    const userData = {
-      email: this.state.email,
-      password: this.state.password
-    };
-    this.props.loginUser(userData);
-  }
-
-  onChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
+  handleSubmit(values) {
+    this.props.loginUser(values);
   }
 
   render() {
-    const { errors } = this.state;
     const { classes } = this.props;
+    const { handleSubmit, pristine, submitting, reset } = this.props;
 
     return (
       <main className={classes.main}>
         <Paper className={classes.paper}>
           <Typography component="h1" variant="h5">
-            Sign in {errors.password}
+            Logowanie
           </Typography>
-          <form onSubmit={this.onSubmit} className={classes.form}>
-            {errors.email ? (
-              <FormControl margin="normal" required fullWidth error>
-                <InputLabel htmlFor="email">Email Address</InputLabel>
-                <Input
-                  name="email"
-                  autoComplete="email"
-                  value={this.state.email}
-                  onChange={this.onChange}
-                  autoFocus
-                />
-                <FormHelperText id="component-error-text">
-                  {errors}
-                </FormHelperText>
-              </FormControl>
-            ) : (
-              <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="email">Email Address</InputLabel>
-                <Input
-                  name="email"
-                  autoComplete="email"
-                  value={this.state.email}
-                  onChange={this.onChange}
-                  autoFocus
-                />
-              </FormControl>
-            )}
-
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="password">Password</InputLabel>
-              <Input
-                name="password"
-                type="password"
-                id="password"
-                value={this.state.password}
-                onChange={this.onChange}
-                autoComplete="current-password"
-              />
-            </FormControl>
+          <form
+            onSubmit={handleSubmit(this.handleSubmit)}
+            className={classes.form}
+          >
+            <Field
+              name="email"
+              component={renderTextField}
+              label="Twój adres email"
+            />
+            <Field
+              name="password"
+              component={renderTextField}
+              label="Twoje hasło"
+            />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
+              disabled={pristine || submitting}
               className={classes.submit}
             >
-              Sign in
+              LOGIN
             </Button>
           </form>
         </Paper>
@@ -152,14 +136,18 @@ class Login extends Component {
 
 Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth,
-  errors: state.errors
+  auth: state.auth
 });
+
+Login = reduxForm({
+  form: "login",
+  fields: ["email", "password"],
+  validate
+})(Login);
 
 export default connect(
   mapStateToProps,

@@ -2,6 +2,9 @@ import ax from "../config/ax";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { GET_ERRORS, SET_CURRENT_USER } from "./types";
+import { SubmissionError } from "redux-form";
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Login - Get User Token:
 export const loginUser = userData => dispatch => {
